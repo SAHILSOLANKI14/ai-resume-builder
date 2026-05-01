@@ -214,6 +214,52 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ─── HOW IT WORKS ─── */}
+      <section id="how-it-works" className="py-24 px-4 bg-[#09090b] relative overflow-hidden">
+        {/* Subtle background element */}
+        <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+        
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-20">
+            <h2 className="text-3xl md:text-5xl font-black tracking-tight mb-6">How it Works</h2>
+            <p className="text-zinc-400 text-lg max-w-2xl mx-auto">
+              Three simple steps to unlock your career potential with advanced AI analysis.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
+            {/* Connecting line for desktop */}
+            <div className="hidden md:block absolute top-16 left-[10%] right-[10%] h-px bg-white/5 border-t border-dashed border-white/10 z-0" />
+
+            {[
+              {
+                step: "01",
+                title: "Upload Resume",
+                desc: "Simply drop your PDF resume or paste your text into the Analysis Lab.",
+              },
+              {
+                step: "02",
+                title: "Paste Job Link",
+                desc: "Add the description of the job you're targeting for an exact comparison.",
+              },
+              {
+                step: "03",
+                title: "Get AI Insights",
+                desc: "Receive a detailed report with scores, missing keywords, and advice.",
+              },
+            ].map((s, i) => (
+              <div key={i} className="relative flex flex-col items-center text-center group z-10">
+                <div className="w-16 h-16 rounded-2xl bg-indigo-600 text-white flex items-center justify-center text-xl font-black mb-8 shadow-xl shadow-indigo-500/20 group-hover:scale-110 transition-transform duration-300">
+                  {s.step}
+                </div>
+                <h3 className="text-2xl font-bold mb-4">{s.title}</h3>
+                <p className="text-zinc-400 leading-relaxed max-w-[280px]">{s.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ─── FOOTER ─── */}
       <footer className="py-12 px-4 border-t border-white/5 text-center bg-[#09090b]">
         <div className="flex items-center justify-center gap-2.5 mb-6">

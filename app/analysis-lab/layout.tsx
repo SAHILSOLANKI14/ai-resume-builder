@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { LayoutDashboard, CreditCard, LogOut, Sparkles, Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function DashboardLayout({
   children,
@@ -11,6 +11,14 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isPro, setIsPro] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/subscription")
+      .then(res => res.json())
+      .then(data => setIsPro(data.plan === "PRO"))
+      .catch(() => {});
+  }, []);
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen font-sans bg-[#09090b] text-[#fafafa]">
@@ -20,7 +28,14 @@ export default function DashboardLayout({
           <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/20">
             <Sparkles size={16} className="text-white" />
           </div>
-          <span className="text-lg font-black tracking-tight">ResuAI</span>
+          <div className="flex items-center gap-2">
+            <span className="text-lg font-black tracking-tight">ResuAI</span>
+            {isPro && (
+              <span className="px-1.5 py-0.5 rounded-md bg-indigo-500/20 border border-indigo-500/30 text-[10px] font-black text-indigo-400 uppercase tracking-wider">
+                PRO
+              </span>
+            )}
+          </div>
         </div>
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -41,7 +56,14 @@ export default function DashboardLayout({
           <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
             <Sparkles size={20} className="text-white" />
           </div>
-          <span className="text-xl font-black tracking-tight">ResuAI</span>
+          <div className="flex flex-col">
+            <span className="text-xl font-black tracking-tight">ResuAI</span>
+            {isPro && (
+              <span className="w-fit mt-0.5 px-1.5 py-0.5 rounded-md bg-indigo-500/20 border border-indigo-500/30 text-[10px] font-black text-indigo-400 uppercase tracking-wider">
+                PRO Member
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Nav Links */}

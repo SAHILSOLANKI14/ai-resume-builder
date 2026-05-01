@@ -34,6 +34,18 @@ export default function Billing() {
     }
   };
 
+  const managePortal = async () => {
+    setUpgrading(true);
+    try {
+      const res = await fetch("/api/stripe/portal", { method: "POST" });
+      const data = await res.json();
+      window.location.href = data.url;
+    } catch (err) {
+      console.error(err);
+      setUpgrading(false);
+    }
+  };
+
   const isPro = sub?.plan === "PRO";
 
   if (loading) {
@@ -48,13 +60,25 @@ export default function Billing() {
   return (
     <div className="flex flex-col gap-10 pb-20">
       {/* ─── HEADER ─── */}
-      <header className="animate-fade-in">
-        <h1 className="text-3xl md:text-4xl font-black tracking-tight mb-2">
-          Billing & Plans
-        </h1>
-        <p className="text-zinc-400 text-base md:text-lg">
-          Manage your subscription and credits.
-        </p>
+      <header className="animate-fade-in flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div>
+          <h1 className="text-3xl md:text-4xl font-black tracking-tight mb-2">
+            Billing & Plans
+          </h1>
+          <p className="text-zinc-400 text-base md:text-lg">
+            Manage your subscription and credits.
+          </p>
+        </div>
+        {isPro && (
+          <button
+            onClick={managePortal}
+            disabled={upgrading}
+            className="px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-sm font-bold hover:bg-white/10 transition-all flex items-center gap-2"
+          >
+            {upgrading ? <Loader2 size={16} className="animate-spin" /> : <CreditCard size={16} />}
+            Manage / Cancel Subscription
+          </button>
+        )}
       </header>
 
       {/* ─── ACTIVE PLAN BANNER ─── */}
@@ -76,11 +100,18 @@ export default function Billing() {
               {isPro ? <Crown size={32} /> : <Shield size={32} className="text-zinc-500" />}
             </div>
             <div>
-              <p className={`text-[10px] font-black uppercase tracking-[0.2em] mb-1 ${
-                isPro ? "text-indigo-200" : "text-zinc-500"
-              }`}>
-                Current Plan
-              </p>
+              <div className="flex items-center gap-3 mb-1">
+                <p className={`text-[10px] font-black uppercase tracking-[0.2em] ${
+                  isPro ? "text-indigo-200" : "text-zinc-500"
+                }`}>
+                  Current Plan
+                </p>
+                {isPro && (
+                  <span className="px-1.5 py-0.5 rounded bg-white/20 text-[8px] font-black uppercase tracking-tighter">
+                    PRO
+                  </span>
+                )}
+              </div>
               <h2 className="text-3xl font-black">{isPro ? "Pro Member" : "Free Tier"}</h2>
             </div>
           </div>
@@ -201,10 +232,11 @@ export default function Billing() {
 
           {isPro ? (
             <button
-              disabled
-              className="w-full py-4 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-2xl text-sm font-black uppercase tracking-widest"
+              onClick={managePortal}
+              disabled={upgrading}
+              className="w-full py-4 bg-white/10 text-white border border-white/20 rounded-2xl text-sm font-black uppercase tracking-widest hover:bg-white/20 transition-all"
             >
-              Current Plan
+              {upgrading ? "Loading..." : "Manage Plan"}
             </button>
           ) : (
             <button

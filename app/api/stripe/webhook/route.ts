@@ -78,6 +78,29 @@ export async function POST(req: Request) {
       console.log("💳 Subscription upgraded to PRO for user:", user.email);
     }
 
+    // 🔴 HANDLE CANCELLATION
+    if (event.type === "customer.subscription.deleted") {
+      const subscription = event.data.object as any;
+      console.log("🗑️ Subscription deletion event for:", subscription.id);
+
+      const userSub = await db.subscription.findFirst({
+        where: { stripeSubId: subscription.id },
+      });
+
+      if (userSub) {
+        await db.subscription.update({
+          where: { id: userSub.id },
+          data: {
+            plan: "FREE",
+            credits: 3, // Reset to free tier credits
+          },
+        });
+        console.log("✅ User downgraded to FREE tier:", userSub.userId);
+      } else {
+        console.warn("⚠️ No user found with subscription ID:", subscription.id);
+      }
+    }
+
     return new Response("OK", { status: 200 });
   } catch (err: any) {
     console.error("❌ Webhook error:", err.message, err.stack);
